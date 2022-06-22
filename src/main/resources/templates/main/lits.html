@@ -19,22 +19,32 @@
         div.photoContents {
             height: 100%;
         }
-
-        div.photoContents>div {
+        div.photoContents > div {
             display: flex;
             flex-wrap: wrap;
         }
-
-        figure {
+        div.photoContents figure {
+            width: 33.33%;
+            height: 293px;
             padding: 10px;
-            width: 25%;
-            height: 250px;
         }
 
-        figure img {
+        div.photoContents figure a {
+            display: block;
+            height: 100%;
+            overflow: hidden;
+        }
+        div.photoContents figure img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: .5s ease;
+            transform-origin: center center;
+
+        }
+        div.photoContents img:hover {
+            transform: scale(1.1);
+            transform-origin: center center;
         }
     </style>
 
@@ -161,17 +171,12 @@
 <!--                                <img alt="" src="">-->
 <!--                            </a>-->
 <!--                        </figure>-->
-                        <figure>
-                            <a href="">
-                                <img alt="" src="/assets/images/project/upload/00435844_photoName6.png">
-                            </a>
-                        </figure>
 
                     </div>
                 </div>
             </div>
         </div>
-        <div><a href="javascript:lits('lanking')">다음 리스트</a></div>
+
 <!--        <footer th:insert="~{/footer :: footer}"></footer>-->
     </main>
 </body>
@@ -210,14 +215,14 @@
         let str = "";  // 리스트 html 담을 변수
 
         $.each(result, function (i, projectVO) {
-            let src = "";
+            let src = "/lit/display?fileName=";
             //이미지 경로
-            src += projectVO.projectFile.uploadPath;
+            src += projectVO.projectFile.uploadPath + "/";
             src += projectVO.projectFile.uuid + "_";
             src += projectVO.projectFile.name;
 
             str += " <figure><a href='"+projectVO.projectNumber+"'>";
-            str += " <img src='"+"src"+"'> ";
+            str += " <img src='" + "/lit/display?fileName=" + projectVO.projectFile.uploadPath +  "/" + projectVO.projectFile.uuid + "_" + projectVO.projectFile.name + "'> ";
             str += "</a></figure>";
         });
         contBox.append(str);
@@ -247,6 +252,30 @@
         // location.href="";
     });
 
+    //스크롤 이벤트
+    let timer;
+    $(window).scroll(function () {
+        // 현 스크롤 탑의 위치
+        let windowTop = $(window).scrollTop();
+        // 변화될 아이
+        let contentHeight = $(".photoContents").height();
+        // 창의 전체 높이
+        let windowHeight = $(window).height();
+
+        // 스크롤이 마지막 이면 데이터 가져오기
+        if (windowTop > (contentHeight - windowHeight)) {
+            // 스크롤 맨 아래
+            if (timer) {
+                clearTimeout(timer);
+            }
+            timer = setTimeout(() => {
+                // ajax 실행
+                litList("lanking");
+            }, 500);
+        } else {
+            //스크롤중..
+        }
+    });
 </script>
 
 </html>
